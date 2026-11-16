@@ -78,7 +78,7 @@ export default function CheckoutPage() {
   const [cardCvv, setCardCvv] = useState('');
   const [cardBrand, setCardBrand] = useState<'visa' | 'mastercard' | 'amex' | 'unknown'>('unknown');
 
-  // Bank Transfer Details & Settings
+  // Bank Transfer Details & Settings (Disabled for Client Demo until live verified corporate account is connected)
   const [bankSettings, setBankSettings] = useState<{
     bankName: string;
     accountName: string;
@@ -90,7 +90,7 @@ export default function CheckoutPage() {
     accountName: 'Aura Luxe Home (Pvt) Ltd',
     accountNumber: '1000 8492 0184',
     branch: 'Colombo Ward Place Prestige Branch',
-    isVerified: true,
+    isVerified: false,
   });
   const [slipFile, setSlipFile] = useState<File | null>(null);
   const [slipPreview, setSlipPreview] = useState<string | null>(null);
@@ -267,27 +267,14 @@ export default function CheckoutPage() {
     }
 
     if (paymentMethod === 'card') {
-      const rawCard = cardNumber.replace(/\s/g, '');
-      if (rawCard.length < 15) {
-        setError('Please enter a valid 16-digit credit/debit card number.');
-        return;
-      }
-      if (!cardHolder.trim()) {
-        setError('Please enter the name on the card.');
-        return;
-      }
-      if (cardExpiry.length < 5) {
-        setError('Please enter a valid card expiry date (MM/YY).');
-        return;
-      }
-      if (cardCvv.length < 3) {
-        setError('Please enter your 3 or 4-digit card security code (CVV).');
-        return;
-      }
+      setError(
+        'Direct online card checkout is currently undergoing banking gateway integration. Please select Cash or Card on Delivery (our white-glove courier brings a wireless POS terminal) or Direct Bank Transfer.'
+      );
+      return;
     }
 
     if (paymentMethod === 'bank_transfer' && !bankSettings.isVerified) {
-      setError('Direct Bank Transfer is currently undergoing admin verification. Please choose COD or Card payment.');
+      setError('Direct Bank Transfer is currently undergoing verification. Please choose Cash or Card on Delivery.');
       return;
     }
 
@@ -713,7 +700,7 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="space-y-3">
-                {/* 1. Cash on Delivery (COD) */}
+                {/* 1. Cash or Card on Delivery (White-Glove POS) */}
                 <label
                   onClick={() => setPaymentMethod('cod')}
                   className={`p-3.5 rounded-xl border cursor-pointer flex items-start gap-3 transition-all ${
@@ -733,43 +720,39 @@ export default function CheckoutPage() {
                     <div className="flex items-center gap-2">
                       <Banknote className="w-4 h-4 text-forest-700" />
                       <span className="font-serif font-bold text-xs text-forest-900">
-                        Cash on Delivery (COD)
+                        Cash or Card on Delivery (Doorstep POS)
                       </span>
                       <span className="bg-forest-100 text-forest-800 text-[10px] font-bold px-2 py-0.5 rounded">
                         All 25 Districts
                       </span>
                     </div>
                     <p className="text-[11px] text-forest-600 leading-relaxed">
-                      Pay cash or card to our white-glove courier team upon inspecting your pieces at your doorstep.
+                      Pay via cash or card upon inspecting your pieces at your doorstep. Our white-glove courier team carries a bank-authorized wireless POS terminal.
                     </p>
                   </div>
                 </label>
 
-                {/* 2. Credit / Debit Card (PCI-DSS Compliant) */}
-                <label
-                  onClick={() => setPaymentMethod('card')}
-                  className={`p-3.5 rounded-xl border cursor-pointer flex items-start gap-3 transition-all ${
-                    paymentMethod === 'card'
-                      ? 'border-forest-700 bg-cream-50 ring-1 ring-forest-700 shadow-sm'
-                      : 'border-cream-300 bg-white hover:border-gold-300'
-                  }`}
-                >
+                {/* 2. Direct Online Card Payment (Transparent Gateway Status) */}
+                <div className="p-3.5 rounded-xl border border-cream-300/80 bg-cream-50/40 opacity-75 flex items-start gap-3 cursor-not-allowed">
                   <input
                     type="radio"
                     name="paymentMethod"
-                    checked={paymentMethod === 'card'}
-                    onChange={() => setPaymentMethod('card')}
-                    className="mt-1 text-forest-700 focus:ring-forest-600"
+                    disabled
+                    checked={false}
+                    className="mt-1 text-forest-700 opacity-40 cursor-not-allowed"
                   />
                   <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-1">
                       <div className="flex items-center gap-1.5">
                         <CreditCard className="w-4 h-4 text-forest-700" />
                         <span className="font-serif font-bold text-xs text-forest-900">
-                          Credit / Debit Card
+                          Direct Online Card Payment
+                        </span>
+                        <span className="bg-amber-100 text-amber-800 text-[9.5px] font-bold px-2 py-0.5 rounded border border-amber-300">
+                          Gateway Integration in Progress
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 opacity-60">
                         <span className="text-[10px] font-bold text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
                           VISA
                         </span>
@@ -782,107 +765,10 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     <p className="text-[11px] text-forest-600 leading-relaxed">
-                      256-bit encrypted checkout. Local & international cards accepted.
+                      Direct online checkout is currently being integrated with our merchant banking partner. To pay by card, please choose <strong>Cash or Card on Delivery</strong> (our courier arrives with a wireless card machine) or <strong>Direct Bank Transfer</strong> below.
                     </p>
                   </div>
-                </label>
-
-                {/* Card Payment Form Section (Appears when Card is active) */}
-                {paymentMethod === 'card' && (
-                  <div className="bg-cream-100/80 p-4 rounded-xl border border-gold-300/60 space-y-3.5 animate-fadeIn">
-                    {/* Visual Card Preview */}
-                    <div className="bg-gradient-to-tr from-forest-900 via-forest-800 to-forest-950 text-cream-100 p-4 rounded-xl shadow-lg border border-gold-400/30 space-y-3 text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="font-serif text-[10px] uppercase tracking-[0.2em] text-gold-400">
-                          Aura Luxe Sanctuary Card
-                        </span>
-                        <span className="text-[11px] font-bold text-gold-300 uppercase tracking-widest">
-                          {cardBrand !== 'unknown' ? cardBrand.toUpperCase() : 'VISA / MC'}
-                        </span>
-                      </div>
-                      <p className="font-mono text-sm tracking-[0.25em] text-cream-50 pt-1">
-                        {cardNumber || '•••• •••• •••• ••••'}
-                      </p>
-                      <div className="flex justify-between text-[10px] text-cream-300/80 pt-1">
-                        <div>
-                          <span className="block text-[8px] uppercase tracking-wider text-gold-400">Cardholder</span>
-                          <span className="font-medium uppercase">{cardHolder || 'CLIENT NAME'}</span>
-                        </div>
-                        <div>
-                          <span className="block text-[8px] uppercase tracking-wider text-gold-400">Expires</span>
-                          <span className="font-medium">{cardExpiry || 'MM/YY'}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Form Fields */}
-                    <div className="space-y-3 text-xs">
-                      <div>
-                        <label className="font-semibold text-forest-800 block mb-1">
-                          Card Number <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={cardNumber}
-                          onChange={(e) => handleCardNumberChange(e.target.value)}
-                          placeholder="4123 4567 8901 2345"
-                          className="w-full text-xs px-3.5 py-2.5 bg-white border border-cream-300 rounded-lg focus:outline-none focus:border-forest-600 font-mono text-forest-900"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="font-semibold text-forest-800 block mb-1">
-                          Cardholder Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={cardHolder}
-                          onChange={(e) => setCardHolder(e.target.value.toUpperCase())}
-                          placeholder="AS APPEARS ON CARD"
-                          className="w-full text-xs px-3.5 py-2.5 bg-white border border-cream-300 rounded-lg focus:outline-none focus:border-forest-600 uppercase text-forest-900"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="font-semibold text-forest-800 block mb-1">
-                            Expiry (MM/YY) <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={cardExpiry}
-                            onChange={(e) => handleExpiryChange(e.target.value)}
-                            placeholder="MM/YY"
-                            className="w-full text-xs px-3.5 py-2.5 bg-white border border-cream-300 rounded-lg focus:outline-none focus:border-forest-600 font-mono text-forest-900"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="font-semibold text-forest-800 flex items-center justify-between mb-1">
-                            <span>CVV / CVC</span>
-                            <span className="text-[10px] text-forest-500 font-normal">3-4 digits</span>
-                          </label>
-                          <input
-                            type="password"
-                            maxLength={4}
-                            value={cardCvv}
-                            onChange={(e) => setCardCvv(e.target.value.replace(/[^0-9]/g, ''))}
-                            placeholder="•••"
-                            className="w-full text-xs px-3.5 py-2.5 bg-white border border-cream-300 rounded-lg focus:outline-none focus:border-forest-600 font-mono text-forest-900"
-                          />
-                        </div>
-                      </div>
-
-                      {/* PCI-DSS Security Compliance Notice */}
-                      <div className="pt-1 flex items-start gap-2 text-[10px] text-forest-700/80 leading-relaxed bg-white/70 p-2.5 rounded-lg border border-cream-200">
-                        <Lock className="w-3.5 h-3.5 text-gold-600 shrink-0 mt-0.5" />
-                        <span>
-                          PCI-DSS Level 1 Encrypted: Aura Luxe never stores full card numbers or CVVs on our servers. Transactions settle in LKR.
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </div>
 
                 {/* 3. Direct Corporate Bank Transfer */}
                 <label
@@ -1051,11 +937,7 @@ export default function CheckoutPage() {
             >
               <Lock className="w-4 h-4 text-gold-300" />
               <span>
-                {loading
-                  ? 'Confirming Order...'
-                  : paymentMethod === 'card'
-                  ? `Pay ${formatLKR(totalAmount)} Now`
-                  : 'Confirm & Place Order'}
+                {loading ? 'Confirming Demo Order...' : 'Confirm & Place Demo Order'}
               </span>
             </button>
 
