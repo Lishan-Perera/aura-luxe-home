@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/db/mongodb';
 import Category from '@/models/Category';
+import Product from '@/models/Product';
+import { getServerSession } from '@/lib/auth/session';
 import { slugify } from '@/lib/utils';
 import { MOCK_CATEGORIES } from '@/lib/data/mockData';
 import { MAIN_NAV_CATEGORIES } from '@/lib/constants/navigation';
@@ -27,6 +29,29 @@ export async function GET() {
       }));
       await Category.insertMany(initial);
       categories = await Category.find().sort({ displayOrder: 1 }).lean();
+    } else {
+      // Ensure any missing core collection is replenished
+      const existingSlugs = new Set(categories.map((c) => c.slug));
+      const missingCore = MAIN_NAV_CATEGORIES.filter((nav) => !existingSlugs.has(nav.slug));
+      if (missingCore.length > 0) {
+        for (const nav of missingCore) {
+          await Category.create({
+            name: nav.name,
+            slug: nav.slug,
+            description: nav.subtitle,
+            displayOrder: 10,
+            isActive: true,
+            subcategories: nav.subcategories.map((sub, sIdx) => ({
+              name: sub.name,
+              slug: sub.slug,
+              description: sub.description,
+              displayOrder: sIdx + 1,
+              isActive: true,
+            })),
+          });
+        }
+        categories = await Category.find().sort({ displayOrder: 1 }).lean();
+      }
     }
 
     return NextResponse.json({ success: true, categories });
@@ -168,6 +193,113 @@ export async function PUT(req: NextRequest) {
       subcategoryId,
     });
   } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
+  }
+}
+
+// DELETE: Safely remove category or subcategory with product relationship verification
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession();
+    if (!session || (session.role !== 'super_admin' && session.role !== 'store_manager')) {
+      return NextResponse.json({ error: 'Unauthorized admin action' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const categoryId = searchParams.get('id') || searchParams.get('categoryId');
+    const subcategoryId = searchParams.get('subcategoryId');
+    const action = searchParams.get('action');
+
+    if (!categoryId) {
+      return NextResponse.json({ error: 'Category ID is required for deletion' }, { status: 400 });
+    }
+
+    await connectToDatabase();
+
+    // 1. Delete Subcategory safely
+    if (action === 'delete_subcategory' || subcategoryId) {
+      const category = await Category.findById(categoryId);
+      if (!category) {
+        return NextResponse.json({ error: 'Parent category not found' }, { status: 404 });
+      }
+
+      const subDoc = category.subcategories?.find(
+        (s: any) => s._id?.toString() === subcategoryId || s.slug === subcategoryId
+      );
+
+      // Check if products are linked to this subcategory
+      if (subDoc) {
+        const linkedProducts = await Product.countDocuments({
+          $or: [
+            { subCategoryId: subDoc._id },
+            { subCategory: subDoc.name },
+            { subCategory: subDoc.slug },
+          ],
+        });
+
+        if (linkedProducts > 0) {
+          return NextResponse.json(
+            {
+              error: `Cannot delete subcategory "${subDoc.name}" because ${linkedProducts} products are currently assigned to it. Please reassign those products first.`,
+            },
+            { status: 400 }
+          );
+        }
+
+        await Category.findByIdAndUpdate(categoryId, {
+          $pull: { subcategories: { _id: subDoc._id } },
+          $set: { updatedAt: new Date() },
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: `Subcategory "${subDoc.name}" was removed successfully.`,
+        });
+      }
+
+      return NextResponse.json({ error: 'Subcategory not found in category' }, { status: 404 });
+    }
+
+    // 2. Delete Primary Category safely
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return NextResponse.json({ error: 'Category not found in database' }, { status: 404 });
+    }
+
+    // Check category-product relationship and core categories protection
+    const isCoreCategory = MAIN_NAV_CATEGORIES.some(
+      (c) => c.slug === category.slug || c.name.toLowerCase() === category.name.toLowerCase()
+    );
+
+    let linkedProductCount = 0;
+    try {
+      linkedProductCount = await Product.countDocuments({
+        $or: [
+          { categoryId: category._id },
+          { roomType: new RegExp(category.name.replace(/Sanctuary|Tableware/gi, '').trim(), 'i') },
+        ],
+      });
+    } catch {
+      linkedProductCount = 0;
+    }
+
+    if (linkedProductCount > 0 || isCoreCategory) {
+      return NextResponse.json(
+        {
+          error: `Cannot delete primary collection category "${category.name}" because ${Math.max(linkedProductCount, 1)} portfolio products are currently associated with it. Please reassign or delete these products first.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    await Category.findByIdAndDelete(categoryId);
+
+    return NextResponse.json({
+      success: true,
+      message: `Category "${category.name}" and its subcategories were removed successfully.`,
+    });
+  } catch (error: any) {
+    console.error('Error deleting category:', error);
     return NextResponse.json({ error: error.message || 'Server error' }, { status: 500 });
   }
 }

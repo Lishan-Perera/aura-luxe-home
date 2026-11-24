@@ -11,6 +11,12 @@ export interface MockProduct {
   roomType: string;
   price: number; // LKR
   compareAtPrice: number;
+  flashSale?: {
+    isActive: boolean;
+    salePrice?: number;
+    startDate?: string | Date;
+    endDate?: string | Date;
+  };
   images: Array<{ url: string; public_id: string; alt: string; isDefault: boolean }>;
   variants: Array<{
     sku: string;
@@ -161,6 +167,12 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     roomType: 'Living Room',
     price: 84500,
     compareAtPrice: 98000,
+    flashSale: {
+      isActive: true,
+      salePrice: 84500,
+      startDate: new Date('2026-11-01T00:00:00Z').toISOString(),
+      endDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+    },
     images: [
       {
         url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=80',
@@ -180,7 +192,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     careInstructions: 'Spot clean boucle with mild fabric cleaner. Dust teak wood with a soft, dry microfibre cloth.',
     variants: [
       { sku: 'ALH-CHR-IVORY', title: 'Ivory Boucle / Natural Teak', colorName: 'Ivory', colorHex: '#FBF8F3', sizeLabel: 'Standard', priceAdjustment: 0, stockQuantity: 6 },
-      { sku: 'ALH-CHR-FOREST', title: 'Forest Velvet / Dark Walnut', colorName: 'Forest Green', colorHex: '#183B2B', sizeLabel: 'Standard', priceAdjustment: 5000, stockQuantity: 4 },
+      { sku: 'ALH-CHR-FOREST', title: 'Forest Velvet / Dark Walnut', colorName: 'Forest Green', colorHex: '#123C2F', sizeLabel: 'Standard', priceAdjustment: 5000, stockQuantity: 4 },
     ],
     isFeatured: true,
     isNewArrival: true,
@@ -200,6 +212,12 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     roomType: 'Luxury Lighting',
     price: 36500,
     compareAtPrice: 42000,
+    flashSale: {
+      isActive: true,
+      salePrice: 36500,
+      startDate: new Date('2026-11-01T00:00:00Z').toISOString(),
+      endDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+    },
     images: [
       {
         url: 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?auto=format&fit=crop&w=1000&q=80',
@@ -239,6 +257,12 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     roomType: 'Artisanal Decor',
     price: 16500,
     compareAtPrice: 19500,
+    flashSale: {
+      isActive: true,
+      salePrice: 16500,
+      startDate: new Date('2026-11-01T00:00:00Z').toISOString(),
+      endDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+    },
     images: [
       {
         url: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=80',
@@ -278,6 +302,12 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     roomType: 'Rugs & Textiles',
     price: 29500,
     compareAtPrice: 35000,
+    flashSale: {
+      isActive: true,
+      salePrice: 29500,
+      startDate: new Date('2026-11-01T00:00:00Z').toISOString(),
+      endDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+    },
     images: [
       {
         url: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1000&q=80',
@@ -311,6 +341,12 @@ export const MOCK_PRODUCTS: MockProduct[] = [
     roomType: 'Dining & Kitchen',
     price: 195000,
     compareAtPrice: 225000,
+    flashSale: {
+      isActive: true,
+      salePrice: 195000,
+      startDate: new Date('2026-11-01T00:00:00Z').toISOString(),
+      endDate: new Date(Date.now() + 3 * 86400000).toISOString(),
+    },
     images: [
       {
         url: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1000&q=80',

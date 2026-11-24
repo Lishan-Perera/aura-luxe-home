@@ -167,9 +167,9 @@ export default function CustomerAccountPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-forest-900 text-cream-100 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-gold-400/20 shadow-xl">
+      <div className="bg-forest-900 text-cream-100 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-white/15 shadow-xl">
         <div className="space-y-1">
-          <span className="text-xs uppercase tracking-[0.25em] text-gold-400 font-semibold">
+          <span className="text-xs uppercase tracking-[0.25em] text-[#E9EDE7] font-semibold">
             Client Sanctuary
           </span>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-cream-50">
@@ -182,9 +182,9 @@ export default function CustomerAccountPage() {
 
         <button
           onClick={handleLogout}
-          className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-forest-800 hover:bg-forest-700 text-cream-200 hover:text-cream-50 text-xs font-semibold flex items-center gap-2 border border-gold-400/20 transition-colors shadow-sm"
+          className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-forest-800 hover:bg-forest-700 text-cream-200 hover:text-cream-50 text-xs font-semibold flex items-center gap-2 border border-white/15 transition-colors shadow-sm"
         >
-          <LogOut className="w-3.5 h-3.5 text-gold-400" />
+          <LogOut className="w-3.5 h-3.5 text-[#E9EDE7]" />
           Sign Out
         </button>
       </div>
@@ -202,7 +202,7 @@ export default function CustomerAccountPage() {
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Package className="w-4 h-4 text-gold-400" />
+                <Package className="w-4 h-4" />
                 <span>Order History ({orders.length})</span>
               </div>
               <ArrowRight className="w-3.5 h-3.5 opacity-60" />
@@ -217,7 +217,7 @@ export default function CustomerAccountPage() {
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-gold-400" />
+                <MapPin className="w-4 h-4" />
                 <span>Saved Sri Lanka Addresses ({addresses.length})</span>
               </div>
               <ArrowRight className="w-3.5 h-3.5 opacity-60" />
@@ -232,7 +232,7 @@ export default function CustomerAccountPage() {
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Heart className="w-4 h-4 text-gold-400" />
+                <Heart className="w-4 h-4" />
                 <span>Saved Wishlist ({wishlistItems.length})</span>
               </div>
               <ArrowRight className="w-3.5 h-3.5 opacity-60" />
@@ -247,7 +247,7 @@ export default function CustomerAccountPage() {
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <User className="w-4 h-4 text-gold-400" />
+                <User className="w-4 h-4" />
                 <span>Profile & Preferences</span>
               </div>
               <ArrowRight className="w-3.5 h-3.5 opacity-60" />
@@ -300,7 +300,7 @@ export default function CustomerAccountPage() {
                               ? 'bg-emerald-100 text-emerald-800'
                               : ord.orderStatus === 'shipped'
                               ? 'bg-blue-100 text-blue-800'
-                              : 'bg-amber-100 text-amber-900 border border-amber-300'
+                              : 'bg-[#E9EDE7] text-[#123C2F] border border-[#D9D9D4]'
                           }`}
                         >
                           {ord.orderStatus}
@@ -320,7 +320,7 @@ export default function CustomerAccountPage() {
                           <div className="flex-1 text-xs">
                             <h4 className="font-serif font-bold text-forest-900 text-sm">{item.title}</h4>
                             <p className="text-forest-500">{item.variant}</p>
-                            <p className="font-semibold text-gold-600 mt-0.5">
+                            <p className="font-semibold text-[#123C2F] mt-0.5">
                               {formatLKR(item.price)} (Qty: {item.quantity})
                             </p>
                           </div>
@@ -330,7 +330,7 @@ export default function CustomerAccountPage() {
 
                     <div className="bg-cream-50 p-3.5 rounded-lg border border-cream-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-forest-700 gap-2">
                       <div className="flex items-center gap-2">
-                        <Truck className="w-4 h-4 text-gold-500 shrink-0" />
+                        <Truck className="w-4 h-4 text-[#123C2F] shrink-0" />
                         <span>
                           Courier: <strong>{ord.courier?.name || 'Prompt Xpress'}</strong> ({ord.courier?.trackingNumber || ord.orderNumber})
                         </span>
@@ -341,7 +341,7 @@ export default function CustomerAccountPage() {
                         </span>
                         <Link
                           href={`/track-order?orderNumber=${ord.orderNumber}`}
-                          className="font-bold text-gold-600 hover:text-gold-700 underline"
+                          className="font-bold text-[#123C2F] hover:text-[#123C2F] underline"
                         >
                           Live Tracking
                         </Link>
@@ -366,7 +366,7 @@ export default function CustomerAccountPage() {
                   onClick={() => setShowAddAddress(!showAddAddress)}
                   className="px-4 py-2 bg-forest-700 hover:bg-forest-800 text-cream-50 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
                 >
-                  <Plus className="w-3.5 h-3.5 text-gold-300" />
+                  <Plus className="w-3.5 h-3.5 text-[#E9EDE7]" />
                   {showAddAddress ? 'Close Form' : 'Add New Address'}
                 </button>
               </div>
@@ -522,7 +522,7 @@ export default function CustomerAccountPage() {
                       </div>
                       <div>
                         <h4 className="font-serif font-bold text-xs text-forest-900 line-clamp-1">{item.title}</h4>
-                        <p className="font-semibold text-gold-600 text-xs">{formatLKR(item.price)}</p>
+                        <p className="font-semibold text-[#123C2F] text-xs">{formatLKR(item.price)}</p>
                       </div>
                       <div className="flex gap-2 pt-1">
                         <button
@@ -536,7 +536,7 @@ export default function CustomerAccountPage() {
                           }}
                           className="flex-1 py-1.5 bg-forest-700 hover:bg-forest-800 text-cream-50 text-[11px] font-semibold rounded flex items-center justify-center gap-1"
                         >
-                          <ShoppingBag className="w-3 h-3 text-gold-300" />
+                          <ShoppingBag className="w-3 h-3 text-[#E9EDE7]" />
                           Move to Bag
                         </button>
                         <button

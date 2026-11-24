@@ -302,11 +302,11 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-16 font-sans">
       {/* Top Header */}
-      <div className="flex items-center justify-between border-b border-cream-300 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cream-300 pb-4">
         <div className="flex items-center gap-3">
           <Link
             href="/admin/products"
-            className="p-2 rounded-lg bg-white border border-cream-300 hover:bg-cream-100 text-forest-700 transition-colors"
+            className="p-2 rounded-lg bg-white border border-cream-300 hover:bg-cream-100 text-forest-700 transition-colors shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -320,7 +320,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
           <Link
             href="/admin/products"
             className="px-4 py-2 text-xs font-semibold text-forest-700 bg-white border border-cream-300 rounded-lg hover:bg-cream-100 transition-colors"
@@ -340,7 +340,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 text-gold-300" />
+                <Save className="w-4 h-4 text-[#E9EDE7]" />
                 <span>Save Changes</span>
               </>
             )}
@@ -369,9 +369,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {/* Basic Info */}
-            <div className="bg-white rounded-xl border border-cream-300 p-6 shadow-sm space-y-4">
+            <div className="bg-white rounded-xl border border-cream-300 p-4 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-cream-200 text-forest-900 font-bold text-sm">
-                <Sparkles className="w-4 h-4 text-gold-500" />
+                <Sparkles className="w-4 h-4 text-[#123C2F]" />
                 <span>Basic Information</span>
               </div>
 
@@ -388,7 +388,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-forest-800 uppercase tracking-wider mb-1">
                     Slug
@@ -452,16 +452,16 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
             </div>
 
             {/* Images */}
-            <div className="bg-white rounded-xl border border-cream-300 p-6 shadow-sm space-y-4">
+            <div className="bg-white rounded-xl border border-cream-300 p-4 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                 <div className="flex items-center gap-2 text-forest-900 font-bold text-sm">
-                  <ImageIcon className="w-4 h-4 text-gold-500" />
+                  <ImageIcon className="w-4 h-4 text-[#123C2F]" />
                   <span>Product Photography ({images.length} images)</span>
                 </div>
               </div>
 
-              <label className="block border-2 border-dashed border-cream-300 hover:border-gold-400 bg-cream-50/60 rounded-xl p-5 text-center cursor-pointer transition-all">
-                <UploadCloud className="w-7 h-7 text-gold-600 mx-auto mb-1" />
+              <label className="block border-2 border-dashed border-cream-300 hover:border-[#123C2F] bg-cream-50/60 rounded-xl p-5 text-center cursor-pointer transition-all">
+                <UploadCloud className="w-7 h-7 text-[#123C2F] mx-auto mb-1" />
                 <span className="text-xs font-bold text-forest-900 block">Click to upload additional photos</span>
                 <input
                   type="file"
@@ -483,7 +483,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                     <div
                       key={img.public_id || idx}
                       className={`relative rounded-lg overflow-hidden border ${
-                        img.isDefault ? 'border-gold-500 ring-2 ring-gold-400/30' : 'border-cream-300'
+                        img.isDefault ? 'border-[#123C2F] ring-2 ring-[#E9EDE7]' : 'border-cream-300'
                       } p-1 bg-white`}
                     >
                       <div className="relative h-24 w-full rounded overflow-hidden bg-cream-100">
@@ -494,10 +494,10 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                           type="button"
                           onClick={() => setPrimaryImage(idx)}
                           className={`flex items-center gap-1 font-semibold ${
-                            img.isDefault ? 'text-gold-700' : 'text-forest-500 hover:text-gold-600'
+                            img.isDefault ? 'text-[#123C2F]' : 'text-forest-500 hover:text-[#123C2F]'
                           }`}
                         >
-                          <Star className={`w-3.5 h-3.5 ${img.isDefault ? 'fill-gold-500 text-gold-500' : ''}`} />
+                          <Star className={`w-3.5 h-3.5 ${img.isDefault ? 'fill-[#123C2F] text-[#123C2F]' : ''}`} />
                           <span>{img.isDefault ? 'Primary' : 'Set'}</span>
                         </button>
                         <button
@@ -520,7 +520,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
             {/* Category Placement */}
             <div className="bg-white rounded-xl border border-cream-300 p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-cream-200 text-forest-900 font-bold text-sm">
-                <Layers className="w-4 h-4 text-gold-500" />
+                <Layers className="w-4 h-4 text-[#123C2F]" />
                 <span>Category Placement</span>
               </div>
 
@@ -567,7 +567,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
             {/* Pricing */}
             <div className="bg-white rounded-xl border border-cream-300 p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-cream-200 text-forest-900 font-bold text-sm">
-                <DollarSign className="w-4 h-4 text-gold-500" />
+                <DollarSign className="w-4 h-4 text-[#123C2F]" />
                 <span>Pricing (LKR)</span>
               </div>
 
@@ -600,7 +600,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
             {/* Inventory */}
             <div className="bg-white rounded-xl border border-cream-300 p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-cream-200 text-forest-900 font-bold text-sm">
-                <Package className="w-4 h-4 text-gold-500" />
+                <Package className="w-4 h-4 text-[#123C2F]" />
                 <span>Inventory</span>
               </div>
 

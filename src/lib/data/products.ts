@@ -52,7 +52,19 @@ export async function getProducts(params: ProductFilterParams = {}): Promise<Moc
         if (params.maxPrice) query.price.$lte = Number(params.maxPrice);
       }
       if (params.search) {
-        query.$text = { $search: params.search };
+        const searchRegex = new RegExp(params.search.trim(), 'i');
+        const searchConditions = [
+          { title: searchRegex },
+          { description: searchRegex },
+          { materials: searchRegex },
+          { shortSummary: searchRegex },
+        ];
+        if (query.$or) {
+          query.$and = [{ $or: query.$or }, { $or: searchConditions }];
+          delete query.$or;
+        } else {
+          query.$or = searchConditions;
+        }
       }
 
       let sortOptions: any = { createdAt: -1 };
@@ -89,6 +101,16 @@ export async function getProducts(params: ProductFilterParams = {}): Promise<Moc
           const slugFromName = p.categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
           return slugFromName === catSlug || slugFromName.includes(catSlug) || catSlug.includes(slugFromName);
         });
+      }
+      if (params.search) {
+        const sq = params.search.toLowerCase().trim();
+        showcaseFallback = showcaseFallback.filter(
+          (p) =>
+            p.title.toLowerCase().includes(sq) ||
+            p.description.toLowerCase().includes(sq) ||
+            p.roomType.toLowerCase().includes(sq) ||
+            p.materials?.some((m) => m.toLowerCase().includes(sq))
+        );
       }
 
       const combined = [...mappedDbProducts, ...showcaseFallback];
@@ -182,5 +204,98 @@ export async function getProductBySlug(slug: string): Promise<MockProduct | null
 
   const found = MOCK_PRODUCTS.find((p) => p.slug === slug);
   return found || null;
+}
+
+export interface FlashSaleCampaign {
+  isActive: boolean;
+  title: string;
+  badge: string;
+  endDate?: string | null;
+}
+
+export async function getFlashSaleCampaign(): Promise<FlashSaleCampaign> {
+  try {
+    if (process.env.MONGODB_URI && !process.env.MONGODB_URI.includes('mock:mock')) {
+      await connectToDatabase();
+      const Setting = (await import('@/models/Setting')).default;
+      const setting = await Setting.findOne({ key: 'flash_sale_campaign' }).lean();
+      if (setting && setting.value) {
+        const val = setting.value as any;
+        const now = new Date();
+        const endDate = val.endDate ? new Date(val.endDate) : null;
+        const isExpired = endDate ? endDate.getTime() <= now.getTime() : false;
+        return {
+          isActive: Boolean(val.isActive) && !isExpired,
+          title: val.title || 'Flash Sale',
+          badge: val.badge || 'On Sale Now',
+          endDate: val.endDate && !isExpired ? new Date(val.endDate).toISOString() : null,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Could not read flash sale campaign settings:', err);
+  }
+
+  // Active campaign with verified future deadline for countdown timer
+  const defaultEnd = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+  return {
+    isActive: true,
+    title: 'Flash Sale',
+    badge: 'On Sale Now',
+    endDate: defaultEnd,
+  };
+}
+
+export async function getFlashSaleProducts(): Promise<MockProduct[]> {
+  try {
+    if (process.env.MONGODB_URI && !process.env.MONGODB_URI.includes('mock:mock')) {
+      await connectToDatabase();
+      const now = new Date();
+      const dbProducts = await Product.find({
+        isActive: true,
+        $or: [
+          {
+            'flashSale.isActive': true,
+            $or: [
+              { 'flashSale.endDate': { $gt: now } },
+              { 'flashSale.endDate': null },
+              { 'flashSale.endDate': { $exists: false } },
+            ],
+          },
+          {
+            $expr: { $gt: ['$compareAtPrice', '$price'] },
+          },
+        ],
+      })
+        .populate('categoryId', 'name slug')
+        .sort({ updatedAt: -1 })
+        .limit(8)
+        .lean();
+
+      if (dbProducts && dbProducts.length > 0) {
+        return dbProducts.map((p: any) => ({
+          ...p,
+          _id: p._id.toString(),
+          id: p._id.toString(),
+          categoryName: p.categoryId?.name || p.roomType || 'General',
+          categoryId: p.categoryId?._id?.toString() || '',
+        }));
+      }
+    }
+  } catch (err) {
+    console.warn('MongoDB flash sale query fell back to curated catalog:', err);
+  }
+
+  const now = Date.now();
+  return MOCK_PRODUCTS.filter((p) => {
+    if (p.flashSale && p.flashSale.isActive) {
+      if (p.flashSale.endDate) {
+        const end = new Date(p.flashSale.endDate).getTime();
+        if (end <= now) return false;
+      }
+      return true;
+    }
+    return p.compareAtPrice && p.compareAtPrice > p.price;
+  }).slice(0, 8);
 }
 

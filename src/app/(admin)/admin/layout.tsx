@@ -1,13 +1,20 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Image as ImageIcon, Settings, LogOut, ExternalLink, ShieldCheck, Layers } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, PlusCircle, Settings, LogOut, ExternalLink, ShieldCheck, Layers, Menu, X, Mail, Sparkles, Users } from 'lucide-react';
 import Logo from '@/components/shared/Logo';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close mobile sidebar drawer automatically on route navigation
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   // If on admin login page, don't show admin sidebar
   if (pathname === '/admin/login') {
@@ -23,26 +30,49 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Dashboard Overview', href: '/admin', icon: LayoutDashboard },
     { name: 'Categories & Subcategories', href: '/admin/categories', icon: Layers },
     { name: 'Products & Inventory', href: '/admin/products', icon: Package },
+    { name: 'Promotions & Flash Sale', href: '/admin/promotions', icon: Sparkles },
     { name: 'Orders & Fulfillment', href: '/admin/orders', icon: ShoppingCart },
-    { name: 'Add Product (Cloudinary)', href: '/admin/products/new', icon: ImageIcon },
+    { name: 'Clients & Customers', href: '/admin/customers', icon: Users },
+    { name: 'Contact Messages', href: '/admin/messages', icon: Mail },
+    { name: 'Add New Product', href: '/admin/products/new', icon: PlusCircle },
     { name: 'District Shipping Settings', href: '/admin/settings', icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen flex bg-cream-200/50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-forest-900 text-cream-100 flex flex-col justify-between border-r border-gold-400/20 shadow-xl shrink-0">
+    <div className="min-h-screen flex bg-[#FBF8F3] overflow-x-hidden">
+      {/* Mobile / Tablet Backdrop Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-[#123C2F]/40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar (Slide-over drawer on mobile/tablet, fixed column on lg+ desktop) */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#123C2F] text-[#FBF8F3] flex flex-col justify-between border-r border-white/10 shrink-0 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+      >
         <div className="p-6 space-y-6">
-          <div className="py-1">
+          <div className="flex items-center justify-between gap-2 py-1">
             <Logo width={160} height={60} variant="light" />
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1.5 rounded-md text-[#E9EDE7] hover:bg-white/10 hover:text-white transition-colors"
+              aria-label="Close navigation menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className="px-3 py-1.5 rounded bg-forest-800/80 border border-gold-400/30 flex items-center justify-between text-[11px]">
-            <span className="text-gold-300 font-semibold">Admin Workspace</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="px-3 py-1.5 rounded-md bg-white/10 border border-white/15 flex items-center justify-between text-[11px]">
+            <span className="text-[#E9EDE7] font-medium">Admin Workspace</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
           </div>
 
-          <nav className="space-y-1.5 text-xs font-medium">
+          <nav className="space-y-1 text-xs font-medium">
             {navItems.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
@@ -50,11 +80,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-all ${
-                    active
-                      ? 'bg-gold-500 text-forest-950 font-bold shadow-sm'
-                      : 'text-cream-200/80 hover:bg-forest-800 hover:text-cream-50'
-                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-colors ${active
+                    ? 'bg-[#E9EDE7] text-[#123C2F] font-semibold'
+                    : 'text-[#E9EDE7]/80 hover:bg-white/10 hover:text-white'
+                    }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   <span>{item.name}</span>
@@ -64,22 +94,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
         </div>
 
-        <div className="p-6 border-t border-forest-800 space-y-3 text-xs">
+        <div className="p-6 border-t border-white/10 space-y-3 text-xs">
           <Link
             href="/"
             target="_blank"
-            className="flex items-center justify-between text-gold-300 hover:text-cream-50 transition-colors py-1"
+            className="flex items-center justify-between text-[#E9EDE7] hover:text-white transition-colors py-1"
           >
             <span className="flex items-center gap-2">
               <ExternalLink className="w-4 h-4" />
               Live Storefront
             </span>
-            <span className="text-[10px] bg-forest-800 px-1.5 py-0.5 rounded">View</span>
+            <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded">View</span>
           </Link>
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 text-cream-300 hover:text-red-400 transition-colors py-1"
+            className="w-full flex items-center gap-2 text-[#E9EDE7]/80 hover:text-red-300 transition-colors py-1"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>
@@ -90,26 +120,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-cream-300 px-8 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-3 text-xs text-forest-600">
-            <span className="font-serif font-bold text-forest-900 text-sm">Aura Luxe Admin</span>
+        <header className="sticky top-0 z-30 h-16 bg-white border-b border-[#D9D9D4] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 text-xs text-[#666666] min-w-0">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-1 rounded-md text-[#123C2F] hover:bg-[#E9EDE7] transition-colors"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="font-semibold text-[#123C2F] text-sm truncate">Aura Luxe Admin</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-xs">
-              <div className="w-8 h-8 rounded-full bg-forest-800 text-gold-300 font-serif font-bold flex items-center justify-center">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <div className="flex items-center gap-2.5 text-xs">
+              <div className="w-8 h-8 rounded-full bg-[#123C2F] text-white font-semibold flex items-center justify-center shrink-0">
                 A
               </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-forest-900">Store Manager</span>
-                <span className="text-[10px] text-forest-500">admin@auraluxe.lk</span>
+              <div className="hidden sm:flex flex-col">
+                <span className="font-medium text-[#333333]">Store Manager</span>
+                <span className="text-[10px] text-[#666666]">admin@auraluxe.lk</span>
               </div>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
           {children}
         </main>
       </div>

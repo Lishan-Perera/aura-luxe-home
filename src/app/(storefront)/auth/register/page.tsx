@@ -184,7 +184,7 @@ function CustomerRegisterForm() {
               className="w-full py-3.5 px-6 rounded-lg bg-forest-700 hover:bg-forest-800 disabled:opacity-50 text-cream-50 font-serif font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 mt-2"
             >
               {loading ? 'Creating Account...' : 'Complete Registration'}
-              <ArrowRight className="w-4 h-4 text-gold-300" />
+              <ArrowRight className="w-4 h-4 text-[#E9EDE7]" />
             </button>
           </form>
 
@@ -202,7 +202,7 @@ function CustomerRegisterForm() {
           <div className="grid grid-cols-2 gap-3">
             <a
               href={`/api/auth/oauth/google?redirect=${encodeURIComponent(redirectTarget)}`}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-gold-400/80 hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-[#123C2F] hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -215,7 +215,7 @@ function CustomerRegisterForm() {
 
             <a
               href={`/api/auth/oauth/facebook?redirect=${encodeURIComponent(redirectTarget)}`}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-gold-400/80 hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-[#123C2F] hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm"
             >
               <svg className="w-4 h-4 fill-[#1877F2] shrink-0" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -229,7 +229,7 @@ function CustomerRegisterForm() {
             Already have an account?{' '}
             <Link
               href={`/auth/login?redirect=${encodeURIComponent(redirectTarget)}`}
-              className="font-bold text-gold-600 hover:text-gold-700 underline transition-colors ml-1"
+              className="font-bold text-[#123C2F] hover:text-[#123C2F] underline transition-colors ml-1"
             >
               Sign In Here
             </Link>
@@ -238,7 +238,7 @@ function CustomerRegisterForm() {
 
         {/* Security Assurance */}
         <div className="flex items-center justify-center gap-2 text-center text-[11px] text-forest-600/80">
-          <ShieldCheck className="w-4 h-4 text-gold-500 shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-[#123C2F] shrink-0" />
           <span>Your personal data is encrypted and strictly confidential.</span>
         </div>
       </div>

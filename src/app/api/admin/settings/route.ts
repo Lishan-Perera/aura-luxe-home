@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { shipping, bank, paymentMethods } = body;
+    const { shipping, bank, paymentMethods, social, contact, storeInfo } = body;
 
     if (process.env.MONGODB_URI && !process.env.MONGODB_URI.includes('mock:mock')) {
       await connectToDatabase();
@@ -36,6 +36,30 @@ export async function POST(req: NextRequest) {
         await Setting.findOneAndUpdate(
           { key: 'payment_methods' },
           { key: 'payment_methods', value: paymentMethods, group: 'payment' },
+          { upsert: true, new: true }
+        );
+      }
+
+      if (social) {
+        await Setting.findOneAndUpdate(
+          { key: 'store_social' },
+          { key: 'store_social', value: social, group: 'general' },
+          { upsert: true, new: true }
+        );
+      }
+
+      if (contact) {
+        await Setting.findOneAndUpdate(
+          { key: 'store_contact' },
+          { key: 'store_contact', value: contact, group: 'contact' },
+          { upsert: true, new: true }
+        );
+      }
+
+      if (storeInfo) {
+        await Setting.findOneAndUpdate(
+          { key: 'store_information' },
+          { key: 'store_information', value: storeInfo, group: 'general' },
           { upsert: true, new: true }
         );
       }

@@ -17,6 +17,13 @@ export interface IProductVariant {
   stockQuantity: number;
 }
 
+export interface IFlashSale {
+  isActive: boolean;
+  salePrice?: number;
+  startDate?: Date;
+  endDate?: Date;
+}
+
 export interface IProduct extends Document {
   title: string;
   slug: string;
@@ -28,6 +35,7 @@ export interface IProduct extends Document {
   roomType: string;
   price: number; // In LKR
   compareAtPrice?: number; // In LKR (original price before discount)
+  flashSale?: IFlashSale;
   images: IProductImage[];
   variants: IProductVariant[];
   materials: string[];
@@ -118,15 +126,7 @@ const ProductSchema = new Schema<IProduct>(
     roomType: {
       type: String,
       required: [true, 'Room type is required'],
-      enum: [
-        'Living Room',
-        'Bedroom',
-        'Dining & Kitchen',
-        'Luxury Lighting',
-        'Artisanal Decor',
-        'Rugs & Textiles',
-        'Outdoor & Patio',
-      ],
+      trim: true,
       index: true,
     },
     price: {
@@ -168,6 +168,12 @@ const ProductSchema = new Schema<IProduct>(
       type: Boolean,
       default: true,
       index: true,
+    },
+    flashSale: {
+      isActive: { type: Boolean, default: false, index: true },
+      salePrice: { type: Number, min: 0 },
+      startDate: { type: Date, default: null },
+      endDate: { type: Date, default: null },
     },
     ratingSummary: {
       average: { type: Number, default: 5.0, min: 0, max: 5 },

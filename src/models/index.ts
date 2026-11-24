@@ -9,4 +9,5 @@ export { default as Payment, type IPayment } from './Payment';
 export { default as Wishlist, type IWishlist } from './Wishlist';
 export { default as Banner, type IBanner } from './Banner';
 export { default as Setting, type ISetting } from './Setting';
+export { default as ContactMessage, type IContactMessage } from './ContactMessage';
 

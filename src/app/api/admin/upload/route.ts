@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary } from '@/lib/cloudinary';
+import fs from 'fs';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +47,7 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 1. Verify Cloudinary credentials are fully configured
+    // 1. If valid Cloudinary credentials exist (non-demo), attempt Cloudinary upload
     const isCloudinaryConfigured = Boolean(
       process.env.CLOUDINARY_CLOUD_NAME &&
       process.env.CLOUDINARY_API_KEY &&
@@ -54,43 +56,53 @@ export async function POST(req: NextRequest) {
       process.env.CLOUDINARY_API_KEY !== '123456789012345'
     );
 
-    if (!isCloudinaryConfigured) {
-      return NextResponse.json(
-        {
-          error:
-            'Cloudinary media storage is not configured. Please add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET to your environment variables to enable persistent image uploads.',
-        },
-        { status: 503 }
-      );
-    }
+    if (isCloudinaryConfigured) {
+      try {
+        const uploadResult = await uploadToCloudinary(buffer, 'products');
 
-    try {
-      const uploadResult = await uploadToCloudinary(buffer, 'products');
-
-      if (!uploadResult || !uploadResult.url) {
-        throw new Error('Cloudinary response did not return a valid secure image URL.');
+        if (uploadResult && uploadResult.url) {
+          return NextResponse.json({
+            success: true,
+            storage: 'cloudinary',
+            image: {
+              url: uploadResult.url,
+              public_id: uploadResult.public_id,
+              alt: file.name,
+              size: file.size,
+              format: uploadResult.format || file.type.split('/')[1] || 'webp',
+            },
+          });
+        }
+      } catch (cloudErr: any) {
+        console.warn('Cloudinary upload attempt failed, falling back to local storage:', cloudErr.message);
       }
-
-      return NextResponse.json({
-        success: true,
-        storage: 'cloudinary',
-        image: {
-          url: uploadResult.url,
-          public_id: uploadResult.public_id,
-          alt: file.name,
-          size: file.size,
-          format: uploadResult.format || file.type.split('/')[1] || 'webp',
-        },
-      });
-    } catch (cloudErr: any) {
-      console.error('Cloudinary upload failure:', cloudErr);
-      return NextResponse.json(
-        {
-          error: `Cloudinary upload failed: ${cloudErr.message || 'Unable to store image on cloud storage'}. Please verify your Cloudinary credentials and network access.`,
-        },
-        { status: 502 }
-      );
     }
+
+    // 2. Local disk storage fallback: Write the file to public/uploads/products/
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'products');
+    await fs.promises.mkdir(uploadsDir, { recursive: true });
+
+    // Sanitize filename
+    const ext = path.extname(file.name) || `.${file.type.split('/')[1] || 'jpg'}`;
+    const baseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const uniqueFileName = `prod_${Date.now()}_${baseName}${ext}`;
+    const filePath = path.join(uploadsDir, uniqueFileName);
+
+    await fs.promises.writeFile(filePath, buffer);
+
+    const publicUrl = `/uploads/products/${uniqueFileName}`;
+
+    return NextResponse.json({
+      success: true,
+      storage: 'local',
+      image: {
+        url: publicUrl,
+        public_id: `local-${path.basename(uniqueFileName, ext)}`,
+        alt: file.name,
+        size: file.size,
+        format: ext.replace('.', ''),
+      },
+    });
   } catch (error: any) {
     console.error('Upload handler error:', error);
     return NextResponse.json(

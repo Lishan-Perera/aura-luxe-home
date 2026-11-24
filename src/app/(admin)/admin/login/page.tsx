@@ -39,12 +39,12 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-forest-900 px-4 py-12">
-      <div className="max-w-md w-full bg-cream-50 rounded-2xl p-8 border border-gold-400/40 shadow-2xl space-y-6">
+      <div className="max-w-md w-full bg-cream-50 rounded-2xl p-5 sm:p-8 border border-[#D9D9D4] shadow-2xl space-y-6">
         <div className="text-center space-y-3">
-          <div className="bg-cream-100 p-3 rounded-xl inline-block border border-gold-300">
+          <div className="bg-cream-100 p-3 rounded-xl inline-block border border-[#D9D9D4]">
             <Logo width={180} height={70} />
           </div>
-          <h1 className="font-serif text-2xl font-bold text-forest-900 mt-2">
+          <h1 className="font-serif text-xl sm:text-2xl font-bold text-forest-900 mt-2">
             Secure Admin Management Portal
           </h1>
           <p className="text-xs text-forest-600">
@@ -93,12 +93,12 @@ export default function AdminLoginPage() {
             className="w-full py-3 px-6 rounded-md bg-forest-700 hover:bg-forest-800 disabled:opacity-50 text-cream-50 font-serif font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
           >
             {loading ? 'Verifying Credentials...' : 'Authenticate & Enter Dashboard'}
-            <ArrowRight className="w-4 h-4 text-gold-300" />
+            <ArrowRight className="w-4 h-4 text-[#E9EDE7]" />
           </button>
         </form>
 
         <div className="flex items-center gap-2 text-[11px] text-forest-600/80 justify-center pt-2 border-t border-cream-200">
-          <ShieldCheck className="w-4 h-4 text-gold-500" />
+          <ShieldCheck className="w-4 h-4 text-[#123C2F]" />
           <span>MongoDB Atlas Encrypted Session</span>
         </div>
       </div>

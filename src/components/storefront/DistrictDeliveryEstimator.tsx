@@ -16,10 +16,10 @@ export default function DistrictDeliveryEstimator({ productPrice }: DistrictDeli
   const districtObj = SRI_LANKA_DISTRICTS.find((d) => d.name === selectedDistrict) || SRI_LANKA_DISTRICTS[0];
 
   return (
-    <div className="rounded-lg border border-gold-300/50 bg-cream-50 p-4 shadow-sm space-y-3.5">
+    <div className="rounded-lg border border-[#D9D9D4] bg-cream-50 p-4 shadow-sm space-y-3.5">
       <div className="flex items-center justify-between border-b border-cream-200 pb-2.5">
         <div className="flex items-center gap-2 text-forest-900 font-serif font-semibold text-sm">
-          <Truck className="w-4 h-4 text-gold-500" />
+          <Truck className="w-4 h-4 text-[#123C2F]" />
           <span>Sri Lanka Islandwide Delivery Options</span>
         </div>
         <span className="text-[11px] font-semibold text-forest-700 bg-cream-200 px-2 py-0.5 rounded border border-cream-300">
@@ -62,19 +62,19 @@ export default function DistrictDeliveryEstimator({ productPrice }: DistrictDeli
         </div>
 
         <div className="flex items-center gap-2 text-xs text-forest-600">
-          <Clock className="w-3.5 h-3.5 text-gold-500 shrink-0" />
+          <Clock className="w-3.5 h-3.5 text-[#123C2F] shrink-0" />
           <span>Estimated Timeline: <strong className="text-forest-800">{eta}</strong></span>
         </div>
 
         <div className="flex items-center gap-2 text-xs text-forest-600">
-          <Banknote className="w-3.5 h-3.5 text-gold-500 shrink-0" />
+          <Banknote className="w-3.5 h-3.5 text-[#123C2F] shrink-0" />
           <span>Cash on Delivery (COD): <strong className="text-forest-700">Available in {selectedDistrict}</strong></span>
         </div>
       </div>
 
       {/* Trust Guarantee */}
       <div className="flex items-center gap-2 text-[11px] text-forest-600/80 pt-1">
-        <ShieldCheck className="w-3.5 h-3.5 text-gold-500 shrink-0" />
+        <ShieldCheck className="w-3.5 h-3.5 text-[#123C2F] shrink-0" />
         <span>Carefully crated and insured against transit damage across Sri Lanka.</span>
       </div>
     </div>

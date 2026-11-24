@@ -35,18 +35,18 @@ export default function Logo({
       {showText && (
         <div className="flex flex-col">
           <span
-            className={`font-serif tracking-widest text-lg font-bold uppercase ${
-              isLight ? 'text-cream-100' : 'text-forest-700'
+            className={`tracking-widest text-lg font-semibold uppercase ${
+              isLight ? 'text-[#FBF8F3]' : 'text-[#123C2F]'
             }`}
           >
             Aura Luxe
           </span>
           <span
-            className={`text-[10px] tracking-[0.25em] uppercase font-sans -mt-1 font-semibold ${
-              isLight ? 'text-gold-300' : 'text-gold-500'
+            className={`text-[10px] tracking-[0.22em] uppercase font-sans -mt-0.5 font-medium ${
+              isLight ? 'text-[#E9EDE7]/80' : 'text-[#333333]/70'
             }`}
           >
-            Home • Décor
+            Home Décor
           </span>
         </div>
       )}

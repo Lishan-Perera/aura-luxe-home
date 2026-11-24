@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Layers, Plus, Check, X, Edit2, Sparkles, FolderTree, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Layers, Plus, Check, X, Edit2, Sparkles, FolderTree, ArrowRight, ShieldCheck, Trash2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface SubCategory {
@@ -130,6 +130,50 @@ export default function AdminCategoriesPage() {
     }
   };
 
+  const handleDeleteSubcategory = async (catId: string, subId: string, subName: string) => {
+    if (!confirm(`Are you sure you want to remove the subcategory "${subName}"?`)) return;
+    try {
+      const res = await fetch(
+        `/api/admin/categories?categoryId=${catId}&subcategoryId=${subId}&action=delete_subcategory`,
+        { method: 'DELETE' }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setStatusMessage(`⚠️ ${data.error || 'Failed to remove subcategory'}`);
+        return;
+      }
+      setStatusMessage(`✨ ${data.message || `Subcategory "${subName}" removed.`}`);
+      await fetchCategories();
+      setTimeout(() => setStatusMessage(''), 4000);
+    } catch (err: any) {
+      setStatusMessage(`⚠️ Error: ${err.message}`);
+    }
+  };
+
+  const handleDeleteCategory = async (catId: string, catName: string) => {
+    if (
+      !confirm(
+        `Are you sure you want to delete the category "${catName}"? This check verifies no products are assigned to it.`
+      )
+    )
+      return;
+    try {
+      const res = await fetch(`/api/admin/categories?id=${catId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStatusMessage(`⚠️ ${data.error || 'Failed to delete category'}`);
+        return;
+      }
+      setStatusMessage(`✨ ${data.message || `Category "${catName}" removed.`}`);
+      await fetchCategories();
+      setTimeout(() => setStatusMessage(''), 4000);
+    } catch (err: any) {
+      setStatusMessage(`⚠️ Error: ${err.message}`);
+    }
+  };
+
   const selectedCategory = categories.find((c) => (c._id || c.id) === activeCatId) || categories[0];
 
   return (
@@ -138,7 +182,7 @@ export default function AdminCategoriesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-cream-300">
         <div>
           <h1 className="font-serif text-2xl font-bold text-forest-900 flex items-center gap-2.5">
-            <FolderTree className="w-6 h-6 text-gold-500" />
+            <FolderTree className="w-6 h-6 text-[#123C2F]" />
             Category &amp; Subcategory Architecture
           </h1>
           <p className="text-xs text-forest-600 mt-0.5">
@@ -183,7 +227,7 @@ export default function AdminCategoriesPage() {
                     onClick={() => setActiveCatId(cat._id || cat.id || '')}
                     className={`w-full text-left p-3.5 rounded-lg border transition-all flex items-center justify-between ${
                       isSelected
-                        ? 'bg-forest-900 text-cream-50 border-gold-400/50 shadow-md'
+                        ? 'bg-forest-900 text-cream-50 border-[#D9D9D4] shadow-md'
                         : 'bg-white hover:bg-cream-100 text-forest-900 border-cream-300'
                     }`}
                   >
@@ -191,14 +235,14 @@ export default function AdminCategoriesPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold font-serif">{cat.name}</span>
                         {cat.isActive && (
-                          <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-gold-400' : 'bg-emerald-500'}`} />
+                          <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#E9EDE7]' : 'bg-emerald-500'}`} />
                         )}
                       </div>
                       <span className={`text-[10px] block mt-0.5 ${isSelected ? 'text-cream-300' : 'text-forest-600'}`}>
                         slug: /{cat.slug} • {subCount} subcategories
                       </span>
                     </div>
-                    <ArrowRight className={`w-4 h-4 ${isSelected ? 'text-gold-300' : 'text-forest-400'}`} />
+                    <ArrowRight className={`w-4 h-4 ${isSelected ? 'text-[#E9EDE7]' : 'text-forest-400'}`} />
                   </button>
                 );
               })}
@@ -208,11 +252,11 @@ export default function AdminCategoriesPage() {
           {/* Right Column: Subcategories Management for Selected Category */}
           <div className="lg:col-span-8 space-y-4">
             {selectedCategory ? (
-              <div className="bg-white rounded-xl border border-cream-300 p-6 shadow-sm space-y-6">
+              <div className="bg-white rounded-xl border border-cream-300 p-4 sm:p-6 shadow-sm space-y-6">
                 {/* Category Header Card */}
                 <div className="bg-cream-50 p-4 rounded-lg border border-cream-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-serif text-lg font-bold text-forest-900">
                         {selectedCategory.name}
                       </h3>
@@ -225,19 +269,35 @@ export default function AdminCategoriesPage() {
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setAddingToCatId(selectedCategory._id || selectedCategory.id || '')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-forest-900 hover:bg-forest-950 text-cream-50 text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 shadow-2xs border border-gold-400/30"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-gold-300" />
-                    <span>Add Subcategory</span>
-                  </button>
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDeleteCategory(
+                          selectedCategory._id || selectedCategory.id || '',
+                          selectedCategory.name
+                        )
+                      }
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold border border-red-200 transition-colors"
+                      title="Safely delete category (verifies no linked products exist)"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAddingToCatId(selectedCategory._id || selectedCategory.id || '')}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded bg-forest-900 hover:bg-forest-950 text-cream-50 text-xs font-semibold uppercase tracking-wider transition-colors shadow-2xs border border-[#D9D9D4]"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-[#E9EDE7]" />
+                      <span>Add Subcategory</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Subcategories List */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-forest-800">
                       Configured Subcategories ({selectedCategory.subcategories?.length || 0})
                     </h4>
@@ -253,8 +313,8 @@ export default function AdminCategoriesPage() {
                           key={sub._id || sub.slug || idx}
                           className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-cream-50/70 transition-colors"
                         >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
                               <span className="font-serif font-bold text-sm text-forest-900">
                                 {sub.name}
                               </span>
@@ -283,7 +343,7 @@ export default function AdminCategoriesPage() {
                             <Link
                               href={`/shop?category=${selectedCategory.slug}&subcategory=${sub.slug}`}
                               target="_blank"
-                              className="text-[11px] text-forest-700 hover:text-gold-600 px-2 py-1 rounded hover:bg-cream-200 transition-colors font-medium underline"
+                              className="text-[11px] text-forest-700 hover:text-[#123C2F] px-2 py-1 rounded hover:bg-cream-200 transition-colors font-medium underline"
                             >
                               Preview Link
                             </Link>
@@ -304,6 +364,20 @@ export default function AdminCategoriesPage() {
                             >
                               {sub.isActive ? 'Deactivate' : 'Activate'}
                             </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleDeleteSubcategory(
+                                  selectedCategory._id || selectedCategory.id || '',
+                                  sub._id || sub.slug,
+                                  sub.name
+                                )
+                              }
+                              className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                              title={`Delete subcategory ${sub.name}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
                           </div>
                         </div>
                       ))
@@ -319,11 +393,11 @@ export default function AdminCategoriesPage() {
                 {addingToCatId && (
                   <form
                     onSubmit={(e) => handleAddSubcategory(e, addingToCatId)}
-                    className="p-4 bg-cream-100/70 border border-gold-300/80 rounded-lg space-y-3 animate-fadeIn"
+                    className="p-4 bg-cream-100/70 border border-[#D9D9D4] rounded-lg space-y-3 animate-fadeIn"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-cream-300">
                       <span className="font-serif font-bold text-xs uppercase tracking-wider text-forest-900 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-gold-500" />
+                        <Sparkles className="w-3.5 h-3.5 text-[#123C2F]" />
                         Add New Subcategory to {selectedCategory.name}
                       </span>
                       <button

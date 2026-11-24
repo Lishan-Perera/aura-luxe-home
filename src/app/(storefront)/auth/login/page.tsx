@@ -109,8 +109,8 @@ function CustomerLoginForm() {
 
         {/* Notices */}
         {infoNotice && (
-          <div className="bg-amber-50/90 border border-amber-300 text-amber-900 p-3.5 rounded-xl text-xs flex items-start gap-2.5 shadow-sm">
-            <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-[#E9EDE7] border border-[#D9D9D4] text-[#123C2F] p-3.5 rounded-xl text-xs flex items-start gap-2.5 shadow-sm">
+            <Info className="w-4 h-4 text-[#123C2F] shrink-0 mt-0.5" />
             <span className="leading-relaxed">{infoNotice}</span>
           </div>
         )}
@@ -151,7 +151,7 @@ function CustomerLoginForm() {
                 <button
                   type="button"
                   onClick={() => setForgotModalOpen(true)}
-                  className="text-[11px] font-semibold text-gold-600 hover:text-gold-700 transition-colors"
+                  className="text-[11px] font-semibold text-[#123C2F] hover:text-[#123C2F] transition-colors"
                 >
                   Forgot Password?
                 </button>
@@ -184,7 +184,7 @@ function CustomerLoginForm() {
               className="w-full py-3.5 px-6 rounded-lg bg-forest-700 hover:bg-forest-800 disabled:opacity-50 text-cream-50 font-serif font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 mt-2"
             >
               {loading ? 'Verifying Credentials...' : 'Sign In to Account'}
-              <ArrowRight className="w-4 h-4 text-gold-300" />
+              <ArrowRight className="w-4 h-4 text-[#E9EDE7]" />
             </button>
           </form>
 
@@ -203,7 +203,7 @@ function CustomerLoginForm() {
             {/* Google */}
             <a
               href={`/api/auth/oauth/google?redirect=${encodeURIComponent(redirectTarget)}`}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-gold-400/80 hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm group"
+              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-[#123C2F] hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm group"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -229,7 +229,7 @@ function CustomerLoginForm() {
             {/* Facebook */}
             <a
               href={`/api/auth/oauth/facebook?redirect=${encodeURIComponent(redirectTarget)}`}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-gold-400/80 hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm group"
+              className="flex items-center justify-center gap-2 py-2.5 px-3 bg-white border border-cream-300 hover:border-[#123C2F] hover:bg-cream-50/60 rounded-lg text-xs font-semibold text-forest-800 transition-all shadow-sm group"
             >
               <svg className="w-4 h-4 fill-[#1877F2] shrink-0" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -239,10 +239,10 @@ function CustomerLoginForm() {
           </div>
 
           {/* Quick Demo Credentials Assistant */}
-          <div className="bg-cream-100/70 p-3.5 rounded-xl border border-gold-300/40 text-xs text-forest-700 space-y-2">
+          <div className="bg-cream-100/70 p-3.5 rounded-xl border border-[#D9D9D4] text-xs text-forest-700 space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-forest-900 flex items-center gap-1.5">
-                <KeyRound className="w-3.5 h-3.5 text-gold-600" />
+                <KeyRound className="w-3.5 h-3.5 text-[#123C2F]" />
                 Quick Test Credentials:
               </span>
               <span className="text-[10px] text-forest-500 uppercase tracking-wider font-semibold">1-Click Fill</span>
@@ -272,7 +272,7 @@ function CustomerLoginForm() {
             Don't have an Aura Luxe account?{' '}
             <Link
               href={`/auth/register?redirect=${encodeURIComponent(redirectTarget)}`}
-              className="font-bold text-gold-600 hover:text-gold-700 underline transition-colors ml-1"
+              className="font-bold text-[#123C2F] hover:text-[#123C2F] underline transition-colors ml-1"
             >
               Register Here
             </Link>
@@ -281,7 +281,7 @@ function CustomerLoginForm() {
 
         {/* Security Assurance */}
         <div className="flex items-center justify-center gap-2 text-center text-[11px] text-forest-600/80">
-          <ShieldCheck className="w-4 h-4 text-gold-500 shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-[#123C2F] shrink-0" />
           <span>256-Bit SSL Encrypted & PCI-DSS Compliant Security</span>
         </div>
       </div>

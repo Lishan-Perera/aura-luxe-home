@@ -165,7 +165,7 @@ export default function AdminProductsPage() {
             href="/admin/products/new"
             className="px-4 py-2.5 bg-forest-700 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-wider rounded-lg shadow transition-all flex items-center gap-2"
           >
-            <Plus className="w-4 h-4 text-gold-300" />
+            <Plus className="w-4 h-4 text-[#E9EDE7]" />
             <span>Add New Product</span>
           </Link>
         </div>
@@ -196,7 +196,7 @@ export default function AdminProductsPage() {
       <div className="bg-white rounded-xl border border-cream-300 shadow-sm overflow-hidden">
         {/* Filter bar */}
         <div className="p-4 border-b border-cream-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-cream-50/30">
-          <div className="relative flex-1 max-w-sm">
+          <div className="relative w-full sm:flex-1 sm:max-w-sm">
             <input
               type="text"
               placeholder="Search by title, SKU, or room..."
@@ -207,12 +207,12 @@ export default function AdminProductsPage() {
             <Search className="w-3.5 h-3.5 text-forest-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-forest-600 font-medium">Sanctuary Room:</span>
+          <div className="flex items-center gap-2 text-xs w-full sm:w-auto">
+            <span className="text-forest-600 font-medium whitespace-nowrap">Sanctuary Room:</span>
             <select
               value={roomFilter}
               onChange={(e) => setRoomFilter(e.target.value)}
-              className="text-xs bg-white border border-cream-300 rounded-lg py-1.5 px-2.5 text-forest-800 font-medium focus:outline-none focus:border-forest-600"
+              className="flex-1 sm:flex-none text-xs bg-white border border-cream-300 rounded-lg py-1.5 px-2.5 text-forest-800 font-medium focus:outline-none focus:border-forest-600"
             >
               <option value="">All Sanctuary Rooms</option>
               <option value="Living Room">Living Room</option>
@@ -227,7 +227,7 @@ export default function AdminProductsPage() {
 
         {/* Table Content */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs min-w-[720px]">
             <thead className="bg-cream-100 text-forest-700 uppercase tracking-wider text-[10px] font-semibold border-b border-cream-200">
               <tr>
                 <th className="py-3.5 px-5">Piece</th>
@@ -290,11 +290,11 @@ export default function AdminProductsPage() {
                         <span
                           className={`font-semibold inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] ${
                             stock <= 3
-                              ? 'bg-amber-100 text-amber-800'
+                              ? 'bg-[#E9EDE7] text-[#123C2F]'
                               : 'bg-emerald-50 text-emerald-800'
                           }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${stock <= 3 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                          <span className={`w-1.5 h-1.5 rounded-full ${stock <= 3 ? 'bg-[#E9EDE7]0' : 'bg-emerald-500'}`} />
                           {stock} in stock
                         </span>
                       </td>
@@ -319,7 +319,7 @@ export default function AdminProductsPage() {
                           <Link
                             href={`/product/${p.slug}`}
                             target="_blank"
-                            className="p-1.5 text-forest-600 hover:text-gold-700 hover:bg-cream-100 rounded transition-colors"
+                            className="p-1.5 text-forest-600 hover:text-[#123C2F] hover:bg-cream-100 rounded transition-colors"
                             title="View on Storefront"
                           >
                             <ExternalLink className="w-4 h-4" />

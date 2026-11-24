@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: ProductPageProps) {
   if (!product) return { title: 'Product Not Found | Aura Luxe Home' };
 
   return {
-    title: `${product.title} | Aura Luxe Home Sri Lanka`,
+    title: `${product.title} | Aura Luxe Home`,
     description: product.shortSummary || product.description,
   };
 }
@@ -27,51 +27,45 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const relatedProducts = (await getProducts({ roomType: product.roomType, limit: 4 }))
+  const relatedProducts = (await getProducts({ limit: 5 }))
     .filter((p) => p.slug !== product.slug)
-    .slice(0, 3);
+    .slice(0, 4);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
-      {/* Breadcrumb */}
-      <nav className="text-xs text-forest-500 flex items-center gap-2">
-        <Link href="/" className="hover:text-gold-600 transition-colors">Home</Link>
-        <span>/</span>
-        <Link href="/shop" className="hover:text-gold-600 transition-colors">Collections</Link>
-        <span>/</span>
-        <Link href={`/shop?room=${encodeURIComponent(product.roomType)}`} className="hover:text-gold-600 transition-colors">
-          {product.roomType}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-14">
+      {/* Simple Breadcrumb */}
+      <nav className="text-xs text-[#666666] flex items-center gap-2 flex-wrap">
+        <Link href="/" className="hover:text-[#123C2F] transition-colors">
+          Home
         </Link>
         <span>/</span>
-        <span className="text-forest-900 font-medium line-clamp-1">{product.title}</span>
+        <Link href="/shop" className="hover:text-[#123C2F] transition-colors">
+          Shop
+        </Link>
+        <span>/</span>
+        <span className="text-[#123C2F] font-medium line-clamp-1">{product.title}</span>
       </nav>
 
-      {/* Main PDP Client Interactive Layout */}
+      {/* Main Product Details */}
       <ProductDetailClient product={product} />
 
-      {/* Complete the Look / Related Pieces */}
+      {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <section className="space-y-6 pt-10 border-t border-cream-300">
+        <section className="space-y-6 pt-10 border-t border-[#D9D9D4]">
           <div className="flex items-end justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-gold-600 font-semibold">
-                Curated Harmonies
-              </p>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-forest-900 mt-1">
-                Complete the Look
-              </h2>
-            </div>
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#123C2F]">
+              You May Also Like
+            </h2>
             <Link
-              href={`/shop?room=${encodeURIComponent(product.roomType)}`}
-              className="text-xs font-semibold uppercase tracking-wider text-forest-700 hover:text-gold-600"
+              href="/shop"
+              className="text-xs sm:text-sm font-medium text-[#123C2F] hover:underline"
             >
-              Explore {product.roomType}
+              View All
             </Link>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {relatedProducts.map((p) => (
-              <ProductCard key={p.id || p._id} product={p} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProducts.map((prod) => (
+              <ProductCard key={prod.id || prod._id} product={prod} />
             ))}
           </div>
         </section>
@@ -79,4 +73,3 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     </div>
   );
 }
-

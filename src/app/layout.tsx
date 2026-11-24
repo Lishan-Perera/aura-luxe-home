@@ -25,7 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-cream-100 text-charcoal-900 selection:bg-gold-200 selection:text-forest-900 font-sans">
+      <body className="min-h-screen flex flex-col bg-[#FBF8F3] text-[#333333] selection:bg-[#E9EDE7] selection:text-[#123C2F] font-sans">
         {children}
       </body>
     </html>

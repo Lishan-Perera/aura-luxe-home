@@ -8,11 +8,17 @@ export interface IBanner extends Document {
   ctaLink?: string;
   image: {
     url: string;
-    public_id: string;
+    public_id?: string;
+  };
+  mobileImage?: {
+    url: string;
+    public_id?: string;
   };
   placement: 'hero' | 'promo' | 'announcement';
   displayOrder: number;
   isActive: boolean;
+  startDate?: Date;
+  endDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,7 +40,7 @@ const BannerSchema = new Schema<IBanner>(
     },
     ctaText: {
       type: String,
-      default: 'Shop Collection',
+      default: 'Shop Now',
       trim: true,
     },
     ctaLink: {
@@ -44,7 +50,11 @@ const BannerSchema = new Schema<IBanner>(
     },
     image: {
       url: { type: String, required: true },
-      public_id: { type: String, required: true },
+      public_id: { type: String, default: '' },
+    },
+    mobileImage: {
+      url: { type: String, default: '' },
+      public_id: { type: String, default: '' },
     },
     placement: {
       type: String,
@@ -60,6 +70,14 @@ const BannerSchema = new Schema<IBanner>(
       type: Boolean,
       default: true,
       index: true,
+    },
+    startDate: {
+      type: Date,
+      default: null,
+    },
+    endDate: {
+      type: Date,
+      default: null,
     },
   },
   {
